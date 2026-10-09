@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+  <h1>Студенты</h1>
+
+  <input id="name" placeholder="Имя">
+  <input id="group" placeholder="Группа">
+  <button onclick="addStudent()">Добавить</button>
+
+  <ul id="list"></ul>
+
+  <script>
+    let allStudents = [];
+
+    async function loadStudents() {
+      const response = await fetch("/students");
+      allStudents = await response.json();
+
+      const list = document.getElementById("list");
+      list.innerHTML = "";
+
+      for (const s of allStudents) {
+        list.innerHTML += `<li>${s.id}. ${s.name} (${s.group})
+          <button onclick="editStudent(${s.id})">Изменить</button>
+          <button onclick="deleteStudent(${s.id})">Удалить</button></li>`;
+      }
+    }
+
+    async function addStudent() {
+      const name = document.getElementById("name").value;
+      const group = document.getElementById("group").value;
+
+      const response = await fetch("/students", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: name, group: group }),
+      });
+
+      if (response.status === 422) {
+        alert("Ошибка: имя должно быть от 1 до 50 символов, группа до 20");
+        return;
+      }
+
+      document.getElementById("name").value = "";
+      document.getElementById("group").value = "";
+      loadStudents();
+    }
+
+    async function editStudent(id) {
+      const student = allStudents.find(x => x.id === id);
+
+      const newName = prompt("Новое имя:", student.name);
+      if (newName === null) return;
+
+      const newGroup = prompt("Новая группа:", student.group);
+      if (newGroup === null) return;
+
+      const response = await fetch("/students/" + id, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: newName, group: newGroup }),
+      });
+
+      if (response.status === 422) {
+        alert("Ошибка: имя должно быть от 1 до 50 символов, группа до 20");
+        return;
+      }
+
+      loadStudents();
+    }
+
+    async function deleteStudent(id) {
+      await fetch("/students/" + id, { method: "DELETE" });
+      loadStudents();
+    }
+
+    loadStudents();
+  </script>
+
+</body>
+</html>
