@@ -21,10 +21,33 @@
       list.innerHTML = "";
 
       for (const s of allStudents) {
-        list.innerHTML += `<li>${s.id}. ${s.name} (${s.group})
+        list.innerHTML += `<li>${s.id}. ${escapeHtml(s.name)} (${escapeHtml(s.group)})
           <button onclick="editStudent(${s.id})">Изменить</button>
           <button onclick="deleteStudent(${s.id})">Удалить</button></li>`;
       }
+    }
+
+    // Имена теперь приходят и от других пользователей, поэтому спецсимволы экранируем
+    function escapeHtml(text) {
+      const div = document.createElement("div");
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    // Обновление в реальном времени: сервер пишет "changed", когда кто-то изменил список
+    function connectWebSocket() {
+      const protocol = location.protocol === "https:" ? "wss://" : "ws://";
+      const socket = new WebSocket(protocol + location.host + "/ws");
+
+      socket.onmessage = () => loadStudents();
+
+      socket.onclose = () => {
+        // связь пропала — пробуем снова через 2 секунды и сразу обновляем список
+        setTimeout(() => {
+          connectWebSocket();
+          loadStudents();
+        }, 2000);
+      };
     }
 
     async function addStudent() {
@@ -76,6 +99,7 @@
     }
 
     loadStudents();
+    connectWebSocket();
   </script>
 
 </body>
