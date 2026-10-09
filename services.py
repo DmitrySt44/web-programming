@@ -4,7 +4,6 @@ from repositories import IStudentRepo
 
 
 class IStudentService(ABC):
-    """Интерфейс сервиса: что приложение умеет делать со студентами."""
 
     @abstractmethod
     def get_students(self):
@@ -28,13 +27,7 @@ class IStudentService(ABC):
 
 
 class NaiveStudentService(IStudentService):
-    """Самая простая реализация: ничего своего не добавляет,
-    просто передаёт вызовы репозиторию.
-
-    Репозиторий приходит в конструктор снаружи (r: IStudentRepo),
-    сервис не знает, JSON это, Postgres или что-то ещё.
-    """
-
+    
     def __init__(self, repo: IStudentRepo):
         self.repo = repo
 

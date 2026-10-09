@@ -4,11 +4,6 @@ from abc import ABC, abstractmethod
 
 
 class IStudentRepo(ABC):
-    """Интерфейс: список методов, которые умеет любое хранилище студентов.
-
-    Сам по себе он ничего не делает, он только говорит
-    «любой репозиторий обязан уметь вот это».
-    """
 
     @abstractmethod
     def get_students(self):
@@ -32,7 +27,6 @@ class IStudentRepo(ABC):
 
 
 class JsonStudentRepo(IStudentRepo):
-    """Хранит студентов в файле students.json (раньше это было в main.py)."""
 
     def __init__(self, file_name="students.json"):
         self.file_name = file_name
@@ -88,12 +82,6 @@ class JsonStudentRepo(IStudentRepo):
 
 
 class InMemoryStudentRepo(IStudentRepo):
-    """Хранит студентов только в памяти, без файла (после перезапуска всё пропадёт).
-
-    Нужен, чтобы убедиться: хранилище можно заменить, не трогая сервис и контроллер.
-    По тому же принципу потом можно написать PostgresStudentRepo или MySqlStudentRepo.
-    """
-
     def __init__(self):
         self.students = []
         self.next_id = 1

@@ -2,7 +2,6 @@ from fastapi import WebSocket
 
 
 class ConnectionManager:
-    """Помнит все открытые страницы (WebSocket-соединения) и умеет написать им всем сразу."""
 
     def __init__(self):
         self.connections = []
@@ -20,5 +19,4 @@ class ConnectionManager:
             try:
                 await websocket.send_text(message)
             except Exception:
-                # страница уже закрыта — просто забываем о ней
                 self.disconnect(websocket)

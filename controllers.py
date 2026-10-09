@@ -6,19 +6,10 @@ from services import IStudentService
 
 
 class StudentController:
-    """Принимает HTTP-запросы по адресу /students и отдаёт работу сервису.
-
-    Сервис приходит в конструктор снаружи (s: IStudentService),
-    контроллер не знает, какой именно сервис и какое хранилище за ним стоят.
-    После каждого изменения контроллер сообщает всем открытым страницам:
-    «список студентов изменился, обновитесь».
-    """
 
     def __init__(self, service: IStudentService, manager: ConnectionManager):
         self.service = service
         self.manager = manager
-
-        # APIRouter — это «набор адресов», который потом подключается к app
         self.router = APIRouter(prefix="/students")
         self.router.add_api_route("", self.get_students, methods=["GET"])
         self.router.add_api_route("", self.add_student, methods=["POST"])
