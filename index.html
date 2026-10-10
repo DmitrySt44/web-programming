@@ -14,7 +14,7 @@
     let allStudents = [];
 
     async function loadStudents() {
-      const response = await fetch("/students");
+      const response = await fetch("http://localhost:8000/students");
       allStudents = await response.json();
 
       const list = document.getElementById("list");
@@ -33,25 +33,25 @@
       return div.innerHTML;
     }
 
-    function connectWebSocket() {
-      const protocol = location.protocol === "https:" ? "wss://" : "ws://";
-      const socket = new WebSocket(protocol + location.host + "/ws");
+    // function connectWebSocket() {
+    //   const protocol = location.protocol === "https:" ? "wss://" : "ws://";
+    //   const socket = new WebSocket(protocol + location.host + "/ws");
 
-      socket.onmessage = () => loadStudents();
+    //   socket.onmessage = () => loadStudents();
 
-      socket.onclose = () => {
-        setTimeout(() => {
-          connectWebSocket();
-          loadStudents();
-        }, 2000);
-      };
-    }
+    //   socket.onclose = () => {
+    //     setTimeout(() => {
+    //       connectWebSocket();
+    //       loadStudents();
+    //     }, 2000);
+    //   };
+    // }
 
     async function addStudent() {
       const name = document.getElementById("name").value;
       const group = document.getElementById("group").value;
 
-      const response = await fetch("/students", {
+      const response = await fetch("http://localhost:8000/students", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name: name, group: group }),
@@ -96,7 +96,7 @@
     }
 
     loadStudents();
-    connectWebSocket();
+    // connectWebSocket();
   </script>
 
 </body>
